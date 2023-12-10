@@ -1,3 +1,12 @@
+function updateDropdownMenu(users) {
+    const dropdownMenu = $('#user-dropdown-template')
+
+    Object.keys(users).forEach(userId => {
+        dropdownMenu.append(`<option value="${userId}">${userId}</option>`)
+    })
+}
+
+
 $('#save-user-page').on('click', function() {
     const userData = $('.user-container').html()
     const quote = $('.quote-container').html()
@@ -5,24 +14,31 @@ $('#save-user-page').on('click', function() {
     const meatText = $('.meat-container').html()
     const friendsData = $('.friends-container').html()
 
-    const snapshot = {
+    const userSnapshot = {
         userData: userData,
         quote: quote,
         pokemonData: pokemonData,
         meatText: meatText,
         friendsData: friendsData
     }
+    const users = JSON.parse(localStorage.getItem('users')) || {}
+    const userId = 'user ' + Object.keys(users).length
+    users[userId] = userSnapshot
+    localStorage.setItem('users', JSON.stringify(users))
 
-    localStorage.setItem('userSnapshot', JSON.stringify(snapshot))
+    updateDropdownMenu(users)
 })
 
-
 $('#load-user-page').on('click', function() {
-    const snapshot = JSON.parse(localStorage.getItem('userSnapshot'))
+    const selectedUserId = $('#user-dropdown-template').val()
+    const users = JSON.parse(localStorage.getItem('users'))
 
-    $('.user-container').html(snapshot.userData)
-    $('.quote-container').html(snapshot.quote)
-    $('.pokemon-container').html(snapshot.pokemonData)
-    $('.meat-container').html(snapshot.meatText)
-    $('.friends-container').html(snapshot.friendsData)
+    if (users && selectedUserId in users) {
+        const selectedUser = users[selectedUserId]
+        $('.user-container').html(selectedUser.userData)
+        $('.quote-container').html(selectedUser.quote)
+        $('.pokemon-container').html(selectedUser.pokemonData)
+        $('.meat-container').html(selectedUser.meatText)
+        $('.friends-container').html(selectedUser.friendsData)
+    }
 })
