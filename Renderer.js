@@ -1,32 +1,27 @@
 class Renderer {
-    renderUserData(userData) {
-        const userTemplate = Handlebars.compile($('#user-template').html())
-        const userContainer = $('.user-container')
-        userContainer.html(userTemplate(userData))
+
+    render(userData, friendsData, quote, pokemonData, meatText){
+        this.emptying()
+        this.commonSection('user-template', userData, 'user-container')
+        this.commonSection('friends-template', { friends: friendsData }, 'friends-container')
+        this.commonSection('quote-template', { quote }, 'quote-container')
+        this.commonSection('pokemon-template', pokemonData, 'pokemon-container')
+        this.commonSection('meat-template', { meatText }, 'meat-container')
     }
 
-    renderFriends(friendsData) {
-        const friendsTemplate = Handlebars.compile($('#friends-template').html())
-        const friendsContainer = $('.friends-container')
-        friendsContainer.html(friendsTemplate({ friends: friendsData }))
+    commonSection(templateName , data, aimDiv){
+        let source = $(`#${templateName}`).html()
+        let template = Handlebars.compile(source)
+        let HTMLToAdd = template(data)
+        $(`.${aimDiv}`).append(HTMLToAdd)
     }
 
-    renderQuote(quote) {
-        const quoteTemplate = Handlebars.compile($('#quote-template').html())
-        const quoteContainer = $('.quote-container')
-        quoteContainer.html(quoteTemplate({ quote }))
-    }
-
-    renderPokemon(pokemonData) {
-        const pokemonTemplate = Handlebars.compile($('#pokemon-template').html())
-        const pokemonContainer = $('.pokemon-container')
-        pokemonContainer.html(pokemonTemplate(pokemonData))
-    }
-
-    renderMeatText(meatText) {
-        const meatTemplate = Handlebars.compile($('#meat-template').html())
-        const meatContainer = $('.meat-container')
-        meatContainer.html(meatTemplate({ meatText }))
+    emptying(){
+        $('.user-container').empty()
+        $('.friends-container').empty()
+        $('.quote-container').empty()
+        $('.pokemon-container').empty()
+        $('.meat-container').empty()
     }
 }
 

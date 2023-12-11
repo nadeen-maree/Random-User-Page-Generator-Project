@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>API Project</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Indie+Flower" rel="stylesheet">
     <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
@@ -14,48 +15,23 @@
 <body>
     <div class="container">	
         <div class="user-container">
-            <script id="user-template" type="text/x-handlebars-template">
-                <div class="user-data">
-                    <img src="{{ picture }}" alt="Profile Pic" id="profile-pic">
-                    <div class="user-info">
-                        <p>{{ firstName }} {{ lastName }}</p>
-                        <p>{{ city }}, {{ state }}</p>
-                    </div>
-                </div>
-            </script>
+            
         </div>	
         <div class="quote-container">
-            <script id="quote-template" type="text/x-handlebars-template">
-                    <h4>Favorite quote:</h4>
-                    <p>{{ quote }}</p>
-            </script>
+           
         </div>	
         <div class="content-container">	
             <div class="pokemon-container">
-                <script id="pokemon-template" type="text/x-handlebars-template">
-                    <img src="{{ image }}" alt="{{ name }}" id="pokemon-image">
-                    <p>Favorite Pokemon: {{properCase name }}</p>
-                </script>
+               
             </div>	
             <div class="meat-container">
-                <script id="meat-template" type="text/x-handlebars-template">
-                    <div class="meat-text">
-                        <h3>About me</h3>
-                        <p>{{ meatText }}</p>
-                    </div>
-                </script>
+               
             </div>	
         </div>	
         <div class="friends">	
             <h4>Friends</h4>	
             <div class="friends-container">	
-                <script id="friends-template" type="text/x-handlebars-template">
-                    {{#each friends}}
-                    <div class="friend">
-                        <p>{{ firstName }} {{ lastName }}</p>
-                    </div>
-                    {{/each}}
-                </script>
+               
             </div>	
         </div>	
         <div class="user-dropdown">
@@ -67,8 +43,39 @@
             <button id="load-user-page">Load User Page</button>
         </div>	
     </div>
-    
-    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>
+    <script id="pokemon-template" type="text/x-handlebars-template">
+        <img id="pokemon-image" src={{image}}>
+
+        <div id="pokemon-text">{{name}}</div>
+   </script>
+
+    <script id="friends-template" type="text/x-handlebars-template">
+        <br>
+        {{#each friends}}
+        <div>{{firstName}} {{lastName}}</div>
+        <br>
+        {{/each}}
+    </script>
+
+    <script id="user-template" type="text/x-handlebars-template">
+        <img id="profile-pic" src={{picture}}>
+        <div class="user-info">
+        {{firstName}} {{lastName}}
+        <br>
+        {{city}}, {{state}}
+        </div>
+   </script>
+<script id="quote-template" type="text/x-handlebars-template">
+        favorite quote
+        <br>
+        <p>{{quote}}</p> 
+    </script>
+
+    <script id="meat-template" type="text/x-handlebars-template">
+        About Me 
+        <br><br>
+        <div class="meat-text">{{meatText}}</div>
+   </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.11/handlebars.js"></script>
     <script src="Renderer.js"></script>
     <script src="APIManager.js"></script>

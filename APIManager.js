@@ -1,10 +1,9 @@
 const AMOUNT_OF_USERS = 7
-const AMOUNT_OF_SENTENCES = 4
 const CURRENT_POKEMON_RECORDED = 949
-const USER_API_URL = 'https://randomuser.me/api/?results='+AMOUNT_OF_USERS
-const QUOTE_API_URL = 'https://api.kanye.rest'
-const POKEMON_API_URL = 'https://pokeapi.co/api/v2/pokemon/'
-const BACON_IPSUM_API_URL = 'https://baconipsum.com/api/?type=all-meat&sentences='+AMOUNT_OF_SENTENCES
+const API_QUOTE =  "https://api.kanye.rest"
+const API_MEAT = "https://baconipsum.com/api/?type=meat-and-filler"
+const API_POKEMON = "https://pokeapi.co/api/v2/pokemon/randomNum/"
+const API_USER = "https://randomuser.me/api/?page=3&results="+AMOUNT_OF_USERS
 
 class APIManager {
     constructor() {
@@ -15,91 +14,80 @@ class APIManager {
             randomPokemon: {},
             meatText: ''
         }
-        this.randomUserUrl = USER_API_URL
-        this.kanyeQuoteUrl = QUOTE_API_URL
-        this.pokeApiUrl = POKEMON_API_URL
-        this.baconIpsumUrl = BACON_IPSUM_API_URL
+        this.randomUserUrl = API_USER
+        this.kanyeQuoteUrl = API_QUOTE
+        this.pokeApiUrl = API_POKEMON
+        this.baconIpsumUrl = API_MEAT
     }
 
-    fetchUserData() {
-        return fetch(this.randomUserUrl)
-            .then(response => response.json())
-            .then(data => {
-                const [mainUser, ...friends] = data.results
+    savingUserData(data){
+        let [mainUser, ...friends] = data.results
 
-                const mainUserData = {
-                    picture: mainUser.picture.large,
-                    firstName: mainUser.name.first,
-                    lastName: mainUser.name.last,
-                    city: mainUser.location.city,
-                    state: mainUser.location.state
-                }
+        let mainUserData = {
+            picture: mainUser.picture.large,
+            firstName: mainUser.name.first,
+            lastName: mainUser.name.last,
+            city: mainUser.location.city,
+            state: mainUser.location.state
+        }
 
-                const friendsData = friends.map(friend => ({
-                    firstName: friend.name.first,
-                    lastName: friend.name.last
-                }))
+        let friendsData = friends.map(friend => ({
+            firstName: friend.name.first,
+            lastName: friend.name.last
+        }))
 
-                this.data.mainUser = mainUserData
-                this.data.friends = friendsData
-
-                renderer.renderFriends(friendsData)
-
-                return mainUserData
-            })
-            .catch(error => {
-                console.error('Error fetching user data:', error)
-                throw error
-            })
+        this.data.mainUser = mainUserData
+        this.data.friends = friendsData
     }
 
-    fetchKanyeQuote() {
-        return fetch(this.kanyeQuoteUrl)
-            .then(response => response.json())
-            .then(data => {
-                this.data.kanyeQuote = data.quote
-                return data.quote
-            })
-            .catch(error => {
-                console.error('Error fetching Kanye quote:', error)
-                throw error
-            })
+    savingQuoteData(data){
+        this.data.kanyeQuote = data.quote
     }
 
-    fetchRandomPokemon() {
-        const randomPokemonId = Math.floor(Math.random() * CURRENT_POKEMON_RECORDED) + 1
-        const randomPokemonUrl = `${this.pokeApiUrl}${randomPokemonId}/`
-
-        return fetch(randomPokemonUrl)
-            .then(response => response.json())
-            .then(data => {
-                const pokemonData = {
-                    name: data.name,
-                    image: data.sprites.front_default
-                }
-                this.data.randomPokemon = pokemonData
-                return pokemonData
-            })
-            .catch(error => {
-                console.error('Error fetching random Pokemon:', error)
-                throw error
-            })
+    savingPokemonData(data){
+        let pokemonData = {
+            name: data.name,
+            image: data.sprites.front_default
+        }
+        this.data.randomPokemon = pokemonData
     }
 
-    fetchMeatText() {
-        return fetch(this.baconIpsumUrl)
-            .then(response => response.json())
-            .then(data => {
-                this.data.meatText = data[0]
-                return data[0]
-            })
-            .catch(error => {
-                console.error('Error fetching meat text:', error)
-                throw error
-            })
+    savingTextData(data){
+        this.data.meatText = data[0]
+    }
+
+    fetch(url) {
+        return $.get(url)
+    }
+    getMeatAPI(){
+        return this.fetch(API_MEAT)
+    }
+    getQuoteAPI(){
+        return this.fetch(API_QUOTE)
+    }
+    getUserAPI(){
+        return this.fetch(API_USER)
+    }
+    getPokemonAPI(){
+        return this.fetch(API_POKEMON.replace("randomNum", Math.floor(Math.random() * CURRENT_POKEMON_RECORDED) + 1))
+    }
+
+    promisingAll(renderer){
+        const allPromoises = [
+            this.getQuoteAPI(),this.getMeatAPI(), this.getPokemonAPI(),this.getUserAPI()
+        ]
+
+        Promise.all(allPromoises).then((Data)=>{
+            console.log(Data)
+            let [quoteData, meatData, pokemonData, allUsers] = Data
+            this.savingUserData(allUsers)
+            this.savingQuoteData(quoteData)
+            this.savingPokemonData(pokemonData)
+            this.savingTextData(meatData)
+            
+            renderer.render(this.data.mainUser, this.data.friends, this.data.kanyeQuote, this.data.randomPokemon, this.data.meatText)
+        })
+
     }
 }
 
-function createAPIManager() {
-    return new APIManager()
-}
